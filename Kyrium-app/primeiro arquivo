@@ -1,24 +1,408 @@
-name: kyrium_ads_ai
-description: App Kyrium Ads AI - Simulação e Operação Turbo
-publish_to: "none"
-version: 1.0.0+1
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Kyrium Ads AI — Demo</title>
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --card:#0f0f10;
+    --gold:#D4AF37;
+    --muted:#bbb;
+    --accent:#ffd966;
+    --glass: rgba(255,255,255,0.03);
+  }
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{background:linear-gradient(180deg,#050505 0%, #0b0b0b 100%); color:#eaeaea; -webkit-font-smoothing:antialiased;}
+  .app{max-width:980px;margin:18px auto;padding:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#b88b1f);display:flex;align-items:center;justify-content:center;font-weight:700;color:#111;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:10px;align-items:center}
+  button{background:linear-gradient(180deg,#1b1b1b,#0f0f0f);border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:10px;color:#fff;cursor:pointer;}
+  .btn-gold{background:linear-gradient(180deg,var(--gold),#b88b1f); color:#0b0b0b; font-weight:700; box-shadow:0 6px 18px rgba(212,175,55,0.12)}
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+  .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02)}
+  .panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .big {font-size:28px;font-weight:700;color:var(--gold)}
+  .muted {color:var(--muted);font-size:13px}
+  .kpi{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .kpi .item{background:var(--glass);padding:10px;border-radius:10px;min-width:140px}
+  .platform-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .platform{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02)}
+  .platform .left{display:flex;gap:10px;align-items:center}
+  .dot{width:12px;height:12px;border-radius:50%;background:rgba(212,175,55,0.12);border:1px solid var(--gold);display:inline-block}
+  .small-muted{font-size:12px;color:var(--muted)}
+  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+  input[type=text], textarea, input[type=number] {width:100%;padding:8px;border-radius:8px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.03);color:#fff}
+  .row{display:flex;gap:10px}
+  .row > * {flex:1}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  .history{max-height:320px;overflow:auto;margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .sale {background:linear-gradient(90deg, rgba(212,175,55,0.06), rgba(255,255,255,0.01));border-radius:10px;padding:10px;display:flex;align-items:center;gap:12px;border-left:4px solid var(--gold)}
+  .sale .amt{font-weight:700;color:var(--gold);font-size:18px}
+  .simulate-controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .toggle {display:inline-flex;align-items:center;gap:8px}
+  .add-plat{display:flex;gap:8px;margin-top:10px}
+  .footer {text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
+  /* notification popup */
+  .toast-wrap{position:fixed;right:16px;bottom:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .toast{width:320px;background:linear-gradient(180deg,#0e0e0e,#0b0b0b);border-radius:12px;padding:12px;border:1px solid rgba(212,175,55,0.18);display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  .toast .ico{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b88b1f);display:flex;align-items:center;justify-content:center;color:#111;font-weight:800}
+  .toast .txt{flex:1}
+  .toast .txt .t{font-weight:700}
+  .toast .txt .s{color:var(--muted);font-size:13px}
+  @media(max-width:920px){ .layout{grid-template-columns:1fr} .toast{width:92vw}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">KAI</div>
+      <div>
+        <h1>Kyrium Ads AI</h1>
+        <p class="lead">Painel — Luxo Preto & Dourado • Simulação & Turbo</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="btnSim" class="btn-gold">Simulação</button>
+      <button id="btnTurbo" class="btn-gold">Iniciar Operação Turbo</button>
+    </div>
+  </header>
 
-environment:
-  sdk: ">=2.19.0 <4.0.0"
+  <div class="layout">
+    <!-- main -->
+    <div>
+      <div class="card">
+        <div class="panel-title">
+          <div>
+            <div class="big" id="revenueDisplay">R$0</div>
+            <div class="muted">Saldo acumulado • Reinvestimento automático ativo</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small-muted">Meta 180d</div>
+            <div style="font-weight:700;color:var(--gold)">R$100.000.000</div>
+          </div>
+        </div>
 
-dependencies:
-  flutter:
-    sdk: flutter
-  audioplayers: ^5.2.0
-  share_plus: ^7.0.2
+        <div class="kpi">
+          <div class="item"><div class="small-muted">Investido</div><div id="invested">R$0</div></div>
+          <div class="item"><div class="small-muted">Reinvestido</div><div id="reinvested">R$0</div></div>
+          <div class="item"><div class="small-muted">ROI Est.</div><div id="roi">—</div></div>
+        </div>
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
+        <div style="margin-top:12px">
+          <label>Valor mínimo inicial (R$)</label>
+          <input type="number" id="minValue" value="100" />
+          <div class="note">Coloque o valor inicial que a IA deve usar. Comece por simulação antes de usar real.</div>
+        </div>
 
-flutter:
-  uses-material-design: true
+        <div style="margin-top:12px" class="simulate-controls">
+          <button id="btnAddFunds">Adicionar Funds (R$100)</button>
+          <button id="btnFastSim">Rodar Teste Rápido</button>
+        </div>
 
-  assets:
-    - assets/sale.mp3
-// teste
+        <div style="margin-top:12px">
+          <label>Histórico de Vendas</label>
+          <div class="history" id="history"></div>
+        </div>
+
+        <div class="note">Quando o total atingir R$5.000.000 a IA iniciará criação de cursos/mentorias/SaaS (simulado).</div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="panel-title">
+          <div><strong>Plataformas & Integrações</strong></div>
+          <div class="small-muted">Cole as chaves/IDs aqui (apenas armazenado localmente)</div>
+        </div>
+
+        <div class="platform-list" id="platformList"></div>
+
+        <div class="add-plat">
+          <input type="text" id="newPlatformName" placeholder="Nome plataforma (ex: Kiwify)" />
+          <button id="btnAddPlatform">Adicionar</button>
+        </div>
+
+        <div style="margin-top:10px">
+          <label>Botão rápido: conectar API (abre modal)</label>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button id="btnOpenIntegrations">Abrir Integrações</button>
+            <button id="btnClearAll">Limpar Plataformas</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- side -->
+    <aside>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Painel Luxo</strong><div class="small-muted">Tema preto & dourado</div></div>
+          <div style="text-align:right"><div class="small-muted">Mercado</div><div style="color:var(--gold);font-weight:700">Global</div></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Operação</label>
+          <div style="display:flex;gap:8px">
+            <button id="btnStatus">Status: Parado</button>
+            <button id="btnStop" style="display:none">Parar</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Configuração reinvestimento</label>
+          <div class="small-muted">Automático: 70% até R$50M, depois 40%</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Notificações</label>
+          <div class="small-muted">Som estilo Hotmart/Kiwify ativado</div>
+          <div style="margin-top:8px"><input type="checkbox" id="chkSound" checked/> Tocar som</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Preferências</label>
+          <div class="small-muted">Salvar plataformas localmente</div>
+        </div>
+
+        <div class="footer">Kyrium Ads AI • Demo</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- toasts -->
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- Integration Modal (simple) -->
+<div id="modal" style="display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9998">
+  <div style="background:#0b0b0b;border-radius:12px;padding:16px;width:92%;max-width:520px;border:1px solid rgba(255,255,255,0.03)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><strong id="modalTitle">Conectar Plataforma</strong><div class="small-muted" id="modalSub">Cole as chaves</div></div>
+      <button id="modalClose">X</button>
+    </div>
+    <div style="margin-top:10px">
+      <label>Nome da Plataforma</label>
+      <input type="text" id="platName" readonly />
+      <label style="margin-top:8px">API Key / Client ID / Token</label>
+      <input type="text" id="platKey" placeholder="Cole aqui" />
+      <label style="margin-top:8px">Webhook URL</label>
+      <input type="text" id="platWebhook" placeholder="https://seuservidor.com/webhook" />
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button id="modalSave" class="btn-gold">Salvar</button>
+        <button id="modalCancel">Cancelar</button>
+      </div>
+      <div class="note">OBS: este app armazena localmente (no dispositivo). Para operações reais, use um backend seguro e conecte as APIs oficialmente.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========= data & helpers ========= */
+const LSKEY = 'kyrium_platforms_v1';
+let platforms = JSON.parse(localStorage.getItem(LSKEY) || '[]');
+let totalRevenue = 0;
+let invested = 0;
+let reinvested = 0;
+let running = false;
+let turboRunning = false;
+let soundEnabled = true;
+const toasts = document.getElementById('toasts');
+
+function fmt(v){ return 'R$' + Number(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+function savePlatforms(){ localStorage.setItem(LSKEY, JSON.stringify(platforms)); renderPlatforms(); }
+
+/* ====== UI render ====== */
+function renderPlatforms(){
+  const el = document.getElementById('platformList'); el.innerHTML='';
+  // default platforms if empty (pre-populate)
+  const defaults = ['Google Ads','Meta Ads','Mercado Livre','CJ Dropshipp','Kiwify','Sunize','Ticto','Cakto','Banco Inter','Canva','Hey Gen'];
+  if(platforms.length===0){
+    platforms = defaults.map(n=>({name:n,key:'',webhook:''}));
+    savePlatforms();
+  }
+  platforms.forEach((p,i)=>{
+    const div = document.createElement('div'); div.className='platform';
+    div.innerHTML = `<div class="left"><div class="dot"></div><div><div style="font-weight:700">${p.name}</div><div class="small-muted">${p.key? 'Conectado':'Não conectado'}</div></div></div>
+    <div><button data-i="${i}" class="btn-config">Conectar</button></div>`;
+    el.appendChild(div);
+  });
+  document.querySelectorAll('.btn-config').forEach(b=>b.onclick = (e)=>{
+    const i = e.target.dataset.i;
+    openModal(i);
+  });
+}
+
+/* ===== modal ===== */
+const modal = document.getElementById('modal');
+const platName = document.getElementById('platName');
+const platKey = document.getElementById('platKey');
+const platWebhook = document.getElementById('platWebhook');
+let editingIndex = null;
+function openModal(i){
+  editingIndex = i;
+  const p = platforms[i];
+  platName.value = p.name; platKey.value = p.key || ''; platWebhook.value = p.webhook || '';
+  modal.style.display = 'flex';
+}
+document.getElementById('modalClose').onclick = ()=> modal.style.display='none';
+document.getElementById('modalCancel').onclick = ()=> modal.style.display='none';
+document.getElementById('modalSave').onclick = ()=>{
+  if(editingIndex===null) return;
+  platforms[editingIndex].key = platKey.value.trim();
+  platforms[editingIndex].webhook = platWebhook.value.trim();
+  savePlatforms();
+  modal.style.display='none';
+};
+
+/* ===== notification (UI + sound) ===== */
+function playSaleSound(){
+  try{
+    if(!soundEnabled) return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    o.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.12);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+    setTimeout(()=>{ o.stop(); ctx.close(); }, 400);
+  }catch(e){ /* ignore */ }
+}
+
+function showToast(title, subtitle, amount){
+  const t = document.createElement('div'); t.className='toast';
+  t.innerHTML = `<div class="ico">★</div><div class="txt"><div class="t">${title}</div><div class="s">${subtitle}</div></div><div style="font-weight:700;color:var(--gold)">${fmt(amount)}</div>`;
+  toasts.prepend(t);
+  playSaleSound();
+  setTimeout(()=> t.remove(), 8000);
+}
+
+/* ===== simulation engine ===== */
+function addSale(amount, platform){
+  totalRevenue += amount;
+  invested += 0; // invested reflects funds you added
+  // reinvest
+  const rate = totalRevenue < 50000000 ? 0.7 : 0.4;
+  const reinv = amount * rate;
+  reinvested += reinv;
+  // update UI
+  document.getElementById('revenueDisplay').innerText = fmt(totalRevenue);
+  document.getElementById('invested').innerText = fmt(invested);
+  document.getElementById('reinvested').innerText = fmt(reinvested);
+  // add history
+  const h = document.getElementById('history');
+  const el = document.createElement('div'); el.className='sale';
+  el.innerHTML = `<div style="flex:1"><div style="font-weight:700">${platform || 'Vendas KAI'}</div><div class="small-muted">Compra recebida</div></div><div class="amt">${fmt(amount)}</div>`;
+  h.prepend(el);
+  showToast('Nova venda realizada', platform || 'Canal: Auto', amount);
+  // milestones
+  if(totalRevenue >= 5000000 && !localStorage.getItem('milestone_5m')){
+    localStorage.setItem('milestone_5m','1');
+    alert('Parabéns! Total >= R$5.000.000 — A IA vai iniciar criação de cursos, mentorias e SaaS (simulado).');
+  }
+}
+
+/* turbo runner */
+let turboInterval = null;
+function startTurbo(realMode=false){
+  if(turboRunning) return;
+  turboRunning = true;
+  document.getElementById('btnStatus').innerText='Status: Turbo';
+  document.getElementById('btnStop').style.display='inline-block';
+  // if realMode must have invested funds (we simulate investing)
+  if(realMode){
+    const min = Number(document.getElementById('minValue').value) || 100;
+    invested += min;
+    // start with min invest
+    document.getElementById('invested').innerText = fmt(invested);
+  }
+  // generate sales periodically (probabilistic)
+  turboInterval = setInterval(()=>{
+    // selection of product champion logic simulated: higher chance if revenue grows
+    const base = Math.max(1, Math.log10(totalRevenue+1000));
+    // compute amount: random champion-oriented values
+    const amounts = [49,97,197,297,497,997,1997,4997];
+    const pick = amounts[Math.floor(Math.random()*amounts.length)];
+    const scale = 1 + Math.min(20, totalRevenue/5000); // scale with revenue
+    const final = Math.round(pick * (1 + Math.random()*0.6) * Math.max(1, scale/6));
+    addSale(final, ['Google Ads','Meta Ads','Kiwify','Mercado Livre'][Math.floor(Math.random()*4)]);
+    // stop condition not present: runs until user stops
+  }, 2200); // every 2.2s ~ for demo
+}
+
+function stopTurbo(){
+  turboRunning = false;
+  document.getElementById('btnStatus').innerText='Status: Parado';
+  document.getElementById('btnStop').style.display='none';
+  if(turboInterval) clearInterval(turboInterval);
+}
+
+/* ===== events ===== */
+document.getElementById('btnSim').onclick = ()=>{
+  // quick simulation: produce 3 mock sales
+  for(let i=0;i<3;i++){
+    setTimeout(()=> addSale([97,197,297][i%3], 'Simulação'), i*600);
+  }
+};
+
+document.getElementById('btnFastSim').onclick = ()=>{
+  // run a short burst
+  for(let i=0;i<8;i++){
+    setTimeout(()=> addSale([49,97,197,297,497][Math.floor(Math.random()*5)], 'Teste Rápido'), i*300);
+  }
+};
+
+document.getElementById('btnAddFunds').onclick = ()=>{
+  invested += 100;
+  document.getElementById('invested').innerText = fmt(invested);
+  alert('R$100 adicionados (simulação local). Agora clique Iniciar Operação Turbo para rodar com esse saldo.');
+};
+
+document.getElementById('btnTurbo').onclick = ()=>{
+  // this demo uses local simulated funds; real mode would require backend
+  const confirmed = confirm('Ativar modo Turbo (SIMULAÇÃO). Para operar real, integre backend/APIs. Deseja continuar?');
+  if(confirmed) startTurbo(true);
+};
+
+document.getElementById('btnStop').onclick = ()=> stopTurbo();
+
+document.getElementById('btnAddPlatform').onclick = ()=>{
+  const name = document.getElementById('newPlatformName').value.trim();
+  if(!name){ alert('Digite o nome da plataforma'); return; }
+  platforms.push({name, key:'', webhook:''});
+  savePlatforms();
+  document.getElementById('newPlatformName').value='';
+};
+
+document.getElementById('btnOpenIntegrations').onclick = ()=> {
+  // open first platform config as quick access
+  openModal(0);
+};
+
+document.getElementById('btnClearAll').onclick = ()=> {
+  if(confirm('Remover todas plataformas?')){ platforms=[]; savePlatforms(); }
+};
+
+document.getElementById('chkSound').onchange = (e)=> soundEnabled = e.target.checked;
+
+/* initial render */
+renderPlatforms();
+document.getElementById('revenueDisplay').innerText = fmt(totalRevenue);
+document.getElementById('invested').innerText = fmt(invested);
+document.getElementById('reinvested').innerText = fmt(reinvested);
+
+/* keyboard friendly: close modal on ESC */
+window.addEventListener('keydown', (e)=> { if(e.key==='Escape') modal.style.display='none' });
+</script>
+</body>
+</html>
