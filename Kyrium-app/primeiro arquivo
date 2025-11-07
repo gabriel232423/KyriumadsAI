@@ -1,5 +1,212 @@
-lfgdoihjdla~eprkasdq3k3ok22927qwp´12l4[
-[çr6554684449865657-5+7486
-4687484744478464147
-8
-yryugke´lhweçrçtkérgphltr[,glçmgwfgkerkergjdgdmfldnbçlr,hb
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
+
+void main() {
+  runApp(const KyriumAdsAI());
+}
+
+class KyriumAdsAI extends StatelessWidget {
+  const KyriumAdsAI({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Kyrium Ads AI',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(primary: Colors.amber),
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: true,
+          fillColor: Color(0xFF1A1A1A),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          hintStyle: TextStyle(color: Colors.grey),
+        ),
+      ),
+      home: const KyriumHomePage(),
+    );
+  }
+}
+
+class KyriumHomePage extends StatefulWidget {
+  const KyriumHomePage({super.key});
+
+  @override
+  State<KyriumHomePage> createState() => _KyriumHomePageState();
+}
+
+class _KyriumHomePageState extends State<KyriumHomePage> {
+  final List<Map<String, String>> _platforms = [
+    {
+      'name': 'Google Ads',
+      'api': '',
+      'webhook': '',
+      'clientId': '',
+      'secretId': '',
+    },
+  ];
+
+  final TextEditingController _kyraTextController = TextEditingController();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  // 🔊 Função para falar com Kyra (Play.ht)
+  Future<void> speakKyra(String text) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.play.ht/api/v2/tts'),
+        headers: {
+          'Authorization': 'Bearer SEU_TOKEN_PLAYHT',
+          'Content-Type': 'application/json',
+          'X-User-ID': 'SEU_USER_ID_PLAYHT'
+        },
+        body: jsonEncode({
+          'text': text,
+          'voice': 'en-US-KyraNeural', // voz realista da Kyra
+          'output_format': 'mp3'
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final audioUrl = data['audio_url'];
+
+        if (audioUrl != null) {
+          await _audioPlayer.play(UrlSource(audioUrl));
+        }
+      } else {
+        debugPrint('Erro Play.ht: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Erro: $e');
+    }
+  }
+
+  void _addPlatform() {
+    setState(() {
+      _platforms.add({
+        'name': '',
+        'api': '',
+        'webhook': '',
+        'clientId': '',
+        'secretId': '',
+      });
+    });
+  }
+
+  Widget _buildPlatformCard(int index) {
+    final platform = _platforms[index];
+    return Card(
+      color: const Color(0xFF121212),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 6,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(labelText: 'Nome da Plataforma'),
+              onChanged: (value) => platform['name'] = value,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: const InputDecoration(labelText: 'API'),
+              onChanged: (value) => platform['api'] = value,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Webhook'),
+              onChanged: (value) => platform['webhook'] = value,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Client ID'),
+              onChanged: (value) => platform['clientId'] = value,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Secret ID'),
+              onChanged: (value) => platform['secretId'] = value,
+            ),
+          ],
+        ),
+      ),
+    ).animate().fade(duration: 400.ms);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Kyrium Ads AI',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.amber,
+            fontSize: 22,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.black,
+        elevation: 10,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _platforms.length,
+              itemBuilder: (context, index) => _buildPlatformCard(index),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF111111),
+              boxShadow: [
+                BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, -2))
+              ],
+            ),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _kyraTextController,
+                  decoration: const InputDecoration(
+                    hintText: 'Digite algo para Kyra falar...',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () => speakKyra(_kyraTextController.text),
+                  icon: const Icon(Icons.mic),
+                  label: const Text('Falar com Kyra'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _addPlatform,
+        label: const Text('Adicionar Plataforma'),
+        icon: const Icon(Icons.add),
+        backgroundColor: Colors.amber,
+        foregroundColor: Colors.black,
+      ),
+    );
+  }
+}
+
